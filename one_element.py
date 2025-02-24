@@ -25,12 +25,15 @@ class ElementGenerator:
     def generate_volume(self, num_elements_x, num_elements_y, num_elements_z):
         element_positions = self.calculate_positions(num_elements_x, num_elements_y, num_elements_z)
 
-        all_elements = []
+        all_elements = set()
         for pos in element_positions:
-            element = self.generate_element_at(*pos)
-            all_elements.extend(element)
+            element_list = self.generate_element_at(*pos)
+            for (_, element_id) in element_list:
+                all_elements.add(element_id)
 
-        return all_elements
+        all_elements = list(all_elements)
+        print(all_elements)
+        return self.fuse_elements(all_elements)
 
     def calculate_positions(self, num_elements_x, num_elements_y, num_elements_z):
         start = (0, 0, 0)
@@ -70,12 +73,24 @@ class ElementGenerator:
         dz = self.h_branch * math.sin(self.angle)
         return dx, dy, dz
 
+    def fuse_elements(self, element_ids):
+        elements_for_fuse = [(3, e) for e in element_ids]
+
+        if len(elements_for_fuse) == 1:
+            return elements_for_fuse
+
+        unified_object = elements_for_fuse[0]
+        for obj in elements_for_fuse[1:]:
+            fused, _ = gmsh.model.occ.fuse([unified_object], [obj])
+            gmsh.model.occ.synchronize()  # синхронизация после каждой операции
+            unified_object = fused[0]
+
+        return unified_object
+
 
 element_generator = ElementGenerator(r_root, h_root, r_branch, h_branch, num_branches, angle)
 
 all_elements = element_generator.generate_volume(2, 2, 2)
-
-# fused, _ = gmsh.model.occ.fragment([(3, e) for e in all_elements], [])
 
 gmsh.model.occ.synchronize()
 
