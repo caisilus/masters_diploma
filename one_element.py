@@ -23,6 +23,17 @@ class ElementGenerator:
         self.z_angle_per_branch = 2 * math.pi / self.num_branches
 
     def generate_volume(self, num_elements_x, num_elements_y, num_elements_z):
+        branched_elements = self.generate_branched_trees(num_elements_x, num_elements_y, num_elements_z)
+        _, fused_trees = self.fuse_elements(branched_elements)
+
+        bounding_box = self.generate_bounding_box_for(fused_trees, margin=1.0)
+        difference_result, _ = gmsh.model.occ.cut([(3, bounding_box)], [(3, fused_trees)], removeTool=False)
+
+        gmsh.model.occ.synchronize()
+
+        return difference_result
+
+    def generate_branched_trees(self, num_elements_x, num_elements_y, num_elements_z):
         element_positions = self.calculate_positions(num_elements_x, num_elements_y, num_elements_z)
 
         all_elements = set()
@@ -31,9 +42,7 @@ class ElementGenerator:
             for (_, element_id) in element_list:
                 all_elements.add(element_id)
 
-        all_elements = list(all_elements)
-        print(all_elements)
-        return self.fuse_elements(all_elements)
+        return list(all_elements)
 
     def calculate_positions(self, num_elements_x, num_elements_y, num_elements_z):
         start = (0, 0, 0)
@@ -87,14 +96,28 @@ class ElementGenerator:
 
         return unified_object
 
+    def generate_bounding_box_for(self, element, margin=1.0):
+        xmin, ymin, zmin, xmax, ymax, zmax = gmsh.model.getBoundingBox(3, element)
+
+        box_x = xmin - margin
+        box_y = ymin - margin
+        box_z = zmin - margin
+        box_dx = (xmax - xmin) + 2 * margin
+        box_dy = (ymax - ymin) + 2 * margin
+        box_dz = (zmax - zmin) + 2 * margin
+
+        box = gmsh.model.occ.addBox(box_x, box_y, box_z, box_dx, box_dy, box_dz)
+        gmsh.model.occ.synchronize()
+
+        return box
+
 
 element_generator = ElementGenerator(r_root, h_root, r_branch, h_branch, num_branches, angle)
 
 all_elements = element_generator.generate_volume(2, 2, 2)
+print(all_elements)
 
-gmsh.model.occ.synchronize()
-
-gmsh.model.mesh.setSize(gmsh.model.getEntities(0), 2)
+gmsh.model.mesh.setSize(gmsh.model.getEntities(0), 1)
 
 # Генерация сетки
 gmsh.model.mesh.generate(3)
