@@ -6,8 +6,7 @@ from celery import Celery
 
 from branching_elements_generator import BranchingElementsGenerator
 
-REDIS_IP = "172.18.225.19"
-# REDIS_IP = "localhost"
+REDIS_IP = "localhost"
 celery_app = Celery("tasks", broker=f"redis://{REDIS_IP}:6379/0")
 
 @celery_app.task(bind=True)
