@@ -1,0 +1,73 @@
+{
+  "models": [
+    {
+      "name": "branching_structure",
+      "description": "Параметрическая модель ветвистой структуры",
+      "parameters": {
+        "r_root": {
+          "type": "float",
+          "min": 0.1,
+          "max": 2.0,
+          "default": 0.5,
+          "description": "Радиус корня (ствола)"
+        },
+        "h_root": {
+          "type": "float",
+          "min": 1.0,
+          "max": 10.0,
+          "default": 4.0,
+          "description": "Высота корня (ствола)"
+        },
+        "r_branch": {
+          "type": "float",
+          "min": 0.05,
+          "max": 1.0,
+          "default": 0.4,
+          "description": "Радиус ветвей"
+        },
+        "h_branch": {
+          "type": "float",
+          "min": 0.5,
+          "max": 5.0,
+          "default": 3.0,
+          "description": "Длина ветвей"
+        },
+        "num_branches": {
+          "type": "int",
+          "min": 1,
+          "max": 10,
+          "default": 4,
+          "description": "Количество ветвей"
+        },
+        "angle": {
+          "type": "float",
+          "min": 0,
+          "max": 90,
+          "default": 30,
+          "description": "Угол наклона ветвей (в градусах)"
+        },
+        "num_elements_x": {
+          "type": "int",
+          "min": 1,
+          "max": 10,
+          "default": 2,
+          "description": "Число элементов по оси X"
+        },
+        "num_elements_y": {
+          "type": "int",
+          "min": 1,
+          "max": 10,
+          "default": 2,
+          "description": "Число элементов по оси Y"
+        },
+        "num_elements_z": {
+          "type": "int",
+          "min": 1,
+          "max": 10,
+          "default": 2,
+          "description": "Число элементов по оси Z"
+        }
+      }
+    }
+  ]
+}
