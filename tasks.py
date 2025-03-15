@@ -4,7 +4,7 @@ import os
 import requests
 from celery import Celery
 
-from branching_elements_generator import BranchingElementsGenerator
+from mesh_generators.branching_elements_generator import BranchingElementsGenerator
 
 REDIS_IP = "localhost"
 celery_app = Celery("tasks", broker=f"redis://{REDIS_IP}:6379/0")

@@ -1,7 +1,7 @@
 import gmsh
 import math
 import sys
-from branching_elements_generator import BranchingElementsGenerator
+from mesh_generators.branching_elements_generator import BranchingElementsGenerator
 
 gmsh.initialize()
 gmsh.model.add("branch_element")

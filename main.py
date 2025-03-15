@@ -1,14 +1,18 @@
-from fastapi import FastAPI, HTTPException
-import json
+from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel, HttpUrl
+import json
+
 from tasks import generate_mesh_task
+from concerns.api_key_authenticator import APIKeyAuthenticator
 
 app = FastAPI()
 
 with open("config.json", "r", encoding="utf-8") as file:
     models_config = json.load(file)
 
-@app.get("/models")
+api_key_auth = APIKeyAuthenticator()
+
+@app.get("/models", dependencies=[Depends(api_key_auth)])
 async def get_models():
     """
     Возвращает JSON с описанием доступных моделей и их параметров.
@@ -21,7 +25,7 @@ class GenerationRequest(BaseModel):
     mesh_size: float
     webhook_url: HttpUrl
 
-@app.post("/generate")
+@app.post("/generate", dependencies=[Depends(api_key_auth)])
 async def generate_mesh(request: GenerationRequest):
     """
     Генерирует файл сетки для заданной модели и параметров. Отправляет результат по веб-хуку
