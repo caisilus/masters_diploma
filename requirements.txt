@@ -3,3 +3,4 @@ uvicorn
 gmsh
 celery
 redis
+python-multipart
