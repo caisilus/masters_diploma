@@ -43,6 +43,6 @@ celery -A tasks.celery_app worker --loglevel=info
 3. (Опционально) запуск сервера для тестового веб-хука на порту 8001
 
 ```bash
-python -m uvicorn main:app --reload --port=8001
+python -m uvicorn test_webhook:app --reload --port=8001
 ```
 
