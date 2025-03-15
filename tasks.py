@@ -47,6 +47,8 @@ def generate_mesh_task(self, parameters, mesh_size, webhook_url):
             files = {"file": (output_filename, file, "application/octet-stream")}
             response = requests.post(webhook_url, files=files)
             response.raise_for_status()
+
+        os.remove(output_filename)
     except Exception as e:
         print("Ошибка при отправке файла:", e)
 
