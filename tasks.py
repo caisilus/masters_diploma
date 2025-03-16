@@ -6,8 +6,8 @@ from celery import Celery
 
 from mesh_generators.branching_elements_generator import BranchingElementsGenerator
 
-REDIS_IP = "localhost"
-celery_app = Celery("tasks", broker=f"redis://{REDIS_IP}:6379/0")
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+celery_app = Celery("tasks", broker=redis_url)
 
 @celery_app.task(bind=True)
 def generate_mesh_task(self, parameters, mesh_size, webhook_url):

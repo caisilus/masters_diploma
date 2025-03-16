@@ -4,3 +4,4 @@ gmsh
 celery
 redis
 python-multipart
+requests
