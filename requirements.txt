@@ -5,3 +5,4 @@ celery
 redis
 python-multipart
 requests
+PyYAML
