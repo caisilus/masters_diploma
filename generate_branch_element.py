@@ -10,7 +10,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Генератор ветвящихся элементов и сетки с использованием Gmsh"
     )
-    parser.add_argument("--config", type=str, default="branch_element.yml", help="Путь к конфигурационному файлу (.json или .yaml)")
+    parser.add_argument("--config", type=str, default="branch_element_4_4_2.yml", help="Путь к конфигурационному файлу (.json или .yaml)")
 
     parser.add_argument("--r-root", type=float, help="Радиус корневого элемента")
     parser.add_argument("--h-root", type=float, help="Высота корневого элемента")
@@ -19,7 +19,7 @@ def parse_args():
     parser.add_argument("--num-branches", type=int, help="Количество ветвей")
     parser.add_argument("--angle", type=float, help="Угол между ветвями в градусах")
     parser.add_argument("--mesh-size", type=float, help="Размер элементов сетки")
-    parser.add_argument("--output", type=str, default="branch_element.msh", help="Имя выходного .msh файла")
+    parser.add_argument("--output", type=str, help="Имя выходного .msh файла")
     parser.add_argument("--no-gui", action="store_true", help="Не запускать GUI визуализации Gmsh")
     return parser.parse_args()
 
@@ -50,19 +50,25 @@ def main():
     angle_rad = math.radians(config.get("angle", 30.0))
 
     element_generator = BranchingElementsGenerator(
-        config.get("r_root", 0.5),
-        config.get("h_root", 4.0),
-        config.get("r_branch", 0.4),
-        config.get("h_branch", 3.0),
-        config.get("num_branches", 4),
+        config.get("r-root", 0.5),
+        config.get("h-root", 4.0),
+        config.get("r-branch", 0.4),
+        config.get("h-branch", 3.0),
+        config.get("num-branches", 4),
         angle_rad
     )
 
-    all_elements = element_generator.generate_volume(2, 2, 2)
+    min_size = 0.9 * config.get("mesh-size", 1.0)
+    max_size = 1.1 * config.get("mesh-size", 1.0)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", min_size)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", max_size)
 
-    gmsh.model.mesh.setSize(gmsh.model.getEntities(0), config.get("mesh_size", 1.0))
+    all_elements = element_generator.generate_volume(4, 5, 2)
+
     gmsh.model.mesh.generate(3)
-    gmsh.write(args.output)
+    filename = config.get("output")
+    print(filename)
+    gmsh.write(filename)
 
     if not args.no_gui:
         gmsh.fltk.run()

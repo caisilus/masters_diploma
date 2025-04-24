@@ -10,39 +10,45 @@ class BranchingElementsGenerator:
         self.num_branches = num_branches
         self.angle = angle
         self.z_angle_per_branch = 2 * math.pi / self.num_branches
+        self.cube_dimention = 1.0 # constant for now
 
     def generate_volume(self, num_elements_x, num_elements_y, num_elements_z):
         branched_elements = self.generate_branched_trees(num_elements_x, num_elements_y, num_elements_z)
         _, fused_trees = self.fuse_elements(branched_elements)
 
-        bounding_box = self.generate_bounding_box_for(fused_trees, margin=1.0)
-        difference_result, _ = gmsh.model.occ.cut([(3, bounding_box)], [(3, fused_trees)], removeTool=False)
+        bounding_box = gmsh.model.occ.add_box(0, 0, 0, self.cube_dimention, self.cube_dimention, self.cube_dimention)
 
         gmsh.model.occ.synchronize()
 
-        return difference_result
+        branch_inside_cube, _ = gmsh.model.occ.intersect([(3, fused_trees)], [(3, bounding_box)], removeTool=False)
+        gmsh.model.occ.synchronize()
+
+        cube_fragments, _ = gmsh.model.occ.fragment([(3, bounding_box)], branch_inside_cube)
+        gmsh.model.occ.synchronize()
+
+        return cube_fragments
 
     def generate_branched_trees(self, num_elements_x, num_elements_y, num_elements_z):
         element_positions = self.calculate_positions(num_elements_x, num_elements_y, num_elements_z)
 
         all_elements = set()
         for pos in element_positions:
-            element_list = self.generate_element_at(*pos)
-            for (_, element_id) in element_list:
-                all_elements.add(element_id)
+            element = self.generate_element_at(*pos)
+            _, element_id = element
+            all_elements.add(element_id)
 
         return list(all_elements)
 
     def calculate_positions(self, num_elements_x, num_elements_y, num_elements_z):
-        start = (0, 0, 0)
+        dx, dy, dz = self.branch_dimentions_by_angle(self.z_angle_per_branch)
+        element_width = math.sqrt(dx * dx + dy * dy) * 1.98
+        element_height = self.h_root + dz * 0.7
+        start = (element_width / 2, element_width / 2, 0)
         positions = [start]
         for iz in range(0, num_elements_z):
             x, y, z = start
-            dx, dy, dz = self.branch_dimentions_by_angle(self.z_angle_per_branch)
-            element_width = math.sqrt(dx * dx + dy * dy) * 1.98
-            element_height = self.h_root + dz * 0.7
             x += dx * iz
-            y += dy * iz
+            y -= dy * iz
             for ix in range(0, num_elements_x):
                 for iy in range(0, num_elements_y):
                     new_point = (x + element_width * ix, y + element_width * iy, z + element_height * iz)
@@ -63,7 +69,7 @@ class BranchingElementsGenerator:
 
         fused, _ = gmsh.model.occ.fuse([(3, root_cylinder)],  [(3, e) for e in branches])
 
-        return fused
+        return fused[0]
 
     def branch_dimentions_by_angle(self, theta):
         dx = self.h_branch * math.cos(theta) * math.cos(self.angle)
