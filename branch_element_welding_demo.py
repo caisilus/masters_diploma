@@ -27,7 +27,8 @@ welder = BranchingElementsWelder()
 _, element1 = element_generator.generate_at(0, 0, 0)
 _, element2 = element_generator.generate_at(4, 0, 0)
 
-welder.weld(element1, element2)
+_, res = welder.weld(element1, element2)
+print(res)
 
 gmsh.model.mesh.generate(3)
 gmsh.write("branch_element_welding.msh")

@@ -18,6 +18,9 @@ def parse_args():
     parser.add_argument("--h-branch", type=float, help="Высота ветвей")
     parser.add_argument("--num-branches", type=int, help="Количество ветвей")
     parser.add_argument("--angle", type=float, help="Угол между ветвями в градусах")
+    parser.add_argument("--num-x", type=int, help="Количество элементов в сетке по оси x")
+    parser.add_argument("--num-y", type=int, help="Количество элементов в сетке по оси y")
+    parser.add_argument("--num-z", type=int, help="Количество элементов в сетке по оси z")
     parser.add_argument("--mesh-size", type=float, help="Размер элементов сетки")
     parser.add_argument("--output", type=str, help="Имя выходного .msh файла")
     parser.add_argument("--no-gui", action="store_true", help="Не запускать GUI визуализации Gmsh")
@@ -55,7 +58,9 @@ def main():
         config.get("r-branch", 0.4),
         config.get("h-branch", 3.0),
         config.get("num-branches", 4),
-        angle_rad
+        config.get("num-x", 4),
+        config.get("num-y", 5),
+        config.get("num-z", 2)
     )
 
     min_size = 0.9 * config.get("mesh-size", 1.0)
@@ -63,7 +68,7 @@ def main():
     gmsh.option.setNumber("Mesh.CharacteristicLengthMin", min_size)
     gmsh.option.setNumber("Mesh.CharacteristicLengthMax", max_size)
 
-    all_elements = element_generator.generate_volume(4, 5, 2)
+    all_elements = element_generator.generate_volume()
 
     gmsh.model.mesh.generate(3)
     filename = config.get("output")

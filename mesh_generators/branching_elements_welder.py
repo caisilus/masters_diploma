@@ -24,5 +24,5 @@ class BranchingElementsWelder:
 
         gmsh.model.occ.synchronize()
 
-        # return fused
-        return 0
+        return fused[0]
+        # return 0
