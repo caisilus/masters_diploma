@@ -12,22 +12,19 @@ max_size = 1.1 * mesh_size
 gmsh.option.setNumber("Mesh.CharacteristicLengthMin", min_size)
 gmsh.option.setNumber("Mesh.CharacteristicLengthMax", max_size)
 
-angle_rad = math.radians(30.0)
-
 element_generator = BranchingElementGenerator(
-    r_root=0.5,
+    4.0, 6.0,
     h_root=4.0,
+    r_root=0.5,
     r_branch=0.4,
-    h_branch=3.0,
     num_branches=4,
-    angle=angle_rad
 )
 welder = BranchingElementsWelder()
 
 _, element1 = element_generator.generate_at(0, 0, 0)
 _, element2 = element_generator.generate_at(4, 0, 0)
 
-_, res = welder.weld(element1, element2)
+_, res = welder.weld(element1, element2, cutting_plane_at=6.0)
 print(res)
 
 gmsh.model.mesh.generate(3)

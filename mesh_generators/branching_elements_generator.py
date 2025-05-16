@@ -81,7 +81,7 @@ class BranchingElementsGenerator:
     def fuse_by_levels(self, elements_by_levels):
         fused = None
         for level, element_ids in elements_by_levels.items():
-            at_level = self.fuse_at_level(element_ids)
+            at_level = self.fuse_at_level(level, element_ids)
             if fused is not None:
                 fused, _ = gmsh.model.occ.fuse([(3, fused)], [(3, at_level)])
                 _, fused = fused[0]
@@ -91,10 +91,17 @@ class BranchingElementsGenerator:
         return fused
 
 
-    def fuse_at_level(self, element_ids):
+    def fuse_at_level(self, level, element_ids):
+        _, height = self.single_element_dimentions()
+        height += level * height
+
         fused = element_ids[0]
         for element_id in element_ids[1:]:
-            _, fused = self.elements_welder.weld(fused, element_id)
+            if level == self.num_z - 1:
+                _, fused = self.elements_welder.weld(fused, element_id)
+            else:
+                _, fused = self.elements_welder.weld(fused, element_id, cutting_plane_at=height)
+
         return fused
 
     def fuse_elements(self, element_ids):
