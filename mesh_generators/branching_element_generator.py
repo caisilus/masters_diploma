@@ -14,7 +14,7 @@ class BranchingElementGenerator:
 
     def calculate_angle_and_h_branch(self):
         dx = self.width / 2
-        dy = self.height = self.h_root
+        dy = self.height - self.h_root
         hypotenuse = math.sqrt(dx * dx + dy * dy)
         self.cos_angle = dx / hypotenuse
         self.sin_angle = dy / hypotenuse

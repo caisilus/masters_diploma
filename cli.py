@@ -23,7 +23,8 @@ def parse_args():
     parser.add_argument("--num-z", type=int, help="Количество элементов в сетке по оси z")
     parser.add_argument("--mesh-size", type=float, help="Размер элементов сетки")
     parser.add_argument("--output", type=str, help="Имя выходного .msh файла")
-    parser.add_argument("--no-gui", action="store_true", help="Не запускать GUI визуализации Gmsh")
+    parser.add_argument("--no-gui", type=bool, help="Не запускать GUI визуализации Gmsh")
+    parser.add_argument("--debug", type=bool, help="Debug режим, в котором строятся дополнительные копии сетки рядом с оригинальной")
     return parser.parse_args()
 
 def load_config(path: str) -> dict:
@@ -50,8 +51,6 @@ def main():
     gmsh.initialize()
     gmsh.model.add("branch_element")
 
-    angle_rad = math.radians(config.get("angle", 30.0))
-
     element_generator = BranchingElementsGenerator(
         config.get("r-root", 0.5),
         config.get("h-root", 4.0),
@@ -70,12 +69,18 @@ def main():
 
     all_elements = element_generator.generate_volume()
 
+    # DEBUG
+    if config.get("debug", False):
+        copies = gmsh.model.occ.copy(all_elements)
+        gmsh.model.occ.translate(copies, 0, 0, 1.1)
+        gmsh.model.occ.synchronize()
+
     gmsh.model.mesh.generate(3)
     filename = config.get("output")
     print(filename)
     gmsh.write(filename)
 
-    if not args.no_gui:
+    if not config.get("no_gui"):
         gmsh.fltk.run()
 
     gmsh.finalize()
