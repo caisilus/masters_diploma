@@ -64,11 +64,10 @@ class BranchingElementsGenerator:
         levels = {}
         for iz in range(0, self.num_z):
             x, y, z = start
-            # x += half_width * iz
-            y -= half_width * iz
+            y += (-1)**iz * half_width * iz
             positions_at_level = []
             for ix in range(0, self.num_x):
-                for iy in range(0, self.num_y):
+                for iy in range(0, self.num_y + (iz % 2)):
                     new_point = (x + element_width * ix, y + element_width * iy, z + element_height * iz)
                     positions_at_level.append(new_point)
 

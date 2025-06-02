@@ -3,9 +3,9 @@ h-root: 0.2835
 r-branch: 0.05
 num-branches: 4
 num-x: 4
-num-y: 5
+num-y: 4
 num-z: 2
 mesh-size: 0.5
-output: "less_cool_branch.msh"
+output: "4_4_2.msh"
 no_gui: false
 debug: false

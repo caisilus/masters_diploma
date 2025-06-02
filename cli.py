@@ -67,6 +67,10 @@ def main():
     gmsh.option.setNumber("Mesh.CharacteristicLengthMin", min_size)
     gmsh.option.setNumber("Mesh.CharacteristicLengthMax", max_size)
 
+    gmsh.option.setNumber("Mesh.ElementOrder", 1)
+    gmsh.option.setNumber("Mesh.SecondOrderLinear", 0)
+    gmsh.option.setNumber("Mesh.HighOrderOptimize", 0)
+
     all_elements = element_generator.generate_volume()
 
     # DEBUG

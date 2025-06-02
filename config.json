@@ -25,27 +25,6 @@
           "default": 0.4,
           "description": "Радиус ветвей"
         },
-        "h_branch": {
-          "type": "float",
-          "min": 0.5,
-          "max": 5.0,
-          "default": 3.0,
-          "description": "Длина ветвей"
-        },
-        "num_branches": {
-          "type": "int",
-          "min": 1,
-          "max": 10,
-          "default": 4,
-          "description": "Количество ветвей"
-        },
-        "angle": {
-          "type": "float",
-          "min": 0,
-          "max": 90,
-          "default": 30,
-          "description": "Угол наклона ветвей (в градусах)"
-        },
         "num_elements_x": {
           "type": "int",
           "min": 1,
