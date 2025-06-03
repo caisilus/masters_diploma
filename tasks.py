@@ -4,33 +4,24 @@ import os
 import requests
 from celery import Celery
 
-from mesh_generators.branching_elements_generator import BranchingElementsGenerator
+from mesh_generators.volume_generator_factory import VolumeGeneratorFactory
 
 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 celery_app = Celery("tasks", broker=redis_url)
 
 @celery_app.task(bind=True)
-def generate_mesh_task(self, parameters, mesh_size, webhook_url):
-    # Извлекаем параметры с установкой значений по умолчанию
-    r_root = parameters.get("r_root", 0.5)
-    h_root = parameters.get("h_root", 4.0)
-    r_branch = parameters.get("r_branch", 0.4)
-    h_branch = parameters.get("h_branch", 3.0)
-    num_branches = parameters.get("num_branches", 4)
-    angle = math.radians(parameters.get("angle", 30))
-
-    num_elements_x = parameters.get("num_elements_x", 2)
-    num_elements_y = parameters.get("num_elements_y", 2)
-    num_elements_z = parameters.get("num_elements_z", 2)
-
+def generate_mesh_task(self, model, parameters, mesh_size, webhook_url):
     gmsh.initialize()
-    gmsh.model.add("branch_element")
+    gmsh.model.add(model)
 
-    element_generator = BranchingElementsGenerator(r_root, h_root, r_branch, h_branch, num_branches, angle)
+    volume_generator = VolumeGeneratorFactory.build(model, parameters)
 
-    all_elements = element_generator.generate_volume(num_elements_x, num_elements_y, num_elements_z)
+    all_elements = volume_generator.generate_volume()
 
-    gmsh.model.mesh.setSize(gmsh.model.getEntities(0), mesh_size)
+    min_size = 0.9 * mesh_size
+    max_size = 1.1 * mesh_size
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMin", min_size)
+    gmsh.option.setNumber("Mesh.CharacteristicLengthMax", max_size)
 
     # Генерация сетки
     gmsh.model.mesh.generate(3)

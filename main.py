@@ -33,5 +33,5 @@ async def generate_mesh(request: GenerationRequest):
     if request.model != "branching_structure":
         raise HTTPException(status_code=400, detail="Unsupported model")
 
-    task = generate_mesh_task.delay(request.parameters, request.mesh_size, str(request.webhook_url))
+    task = generate_mesh_task.delay(request.model, request.parameters, request.mesh_size, str(request.webhook_url))
     return {"task_id": task.id, "status": "Task submitted"}

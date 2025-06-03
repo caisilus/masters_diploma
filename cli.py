@@ -15,9 +15,7 @@ def parse_args():
     parser.add_argument("--r-root", type=float, help="Радиус корневого элемента")
     parser.add_argument("--h-root", type=float, help="Высота корневого элемента")
     parser.add_argument("--r-branch", type=float, help="Радиус ветвей")
-    parser.add_argument("--h-branch", type=float, help="Высота ветвей")
     parser.add_argument("--num-branches", type=int, help="Количество ветвей")
-    parser.add_argument("--angle", type=float, help="Угол между ветвями в градусах")
     parser.add_argument("--num-x", type=int, help="Количество элементов в сетке по оси x")
     parser.add_argument("--num-y", type=int, help="Количество элементов в сетке по оси y")
     parser.add_argument("--num-z", type=int, help="Количество элементов в сетке по оси z")
@@ -55,7 +53,6 @@ def main():
         config.get("r-root", 0.5),
         config.get("h-root", 4.0),
         config.get("r-branch", 0.4),
-        config.get("h-branch", 3.0),
         config.get("num-branches", 4),
         config.get("num-x", 4),
         config.get("num-y", 5),

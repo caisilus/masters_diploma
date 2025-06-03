@@ -2,14 +2,14 @@ import gmsh
 import math
 from mesh_generators.branching_element_generator import BranchingElementGenerator
 from mesh_generators.branching_elements_welder import BranchingElementsWelder
+from mesh_generators.volume_generator import ParamType, VolumeGenerator
 
-class BranchingElementsGenerator:
-    def __init__(self, r_root=0.5, h_root=4.0, r_branch=0.4, h_branch=3.0, num_branches=4,
+class BranchingElementsGenerator(VolumeGenerator):
+    def __init__(self, r_root=0.5, h_root=4.0, r_branch=0.4, num_branches=4,
                  num_x=4, num_y=5, num_z=2):
         self.r_root = r_root
         self.h_root = h_root
         self.r_branch = r_branch
-        self.h_branch = h_branch
         self.num_branches = num_branches
         self.num_x = num_x
         self.num_y = num_y
@@ -21,6 +21,11 @@ class BranchingElementsGenerator:
             element_width, element_height, h_root=h_root, r_root=r_root, r_branch=r_branch,num_branches=num_branches
         )
         self.elements_welder = BranchingElementsWelder()
+
+    @classmethod
+    def build(cls, params: ParamType):
+        return cls(params["r_root"], params["h_root"], params["r_branch"], 4,
+            params["num_elements_x"], params["num_elements_y"], params["num_elements_z"])
 
     # TODO: rework to give all 3 dimentions
     def single_element_dimentions(self):
@@ -88,7 +93,6 @@ class BranchingElementsGenerator:
                 fused = at_level
 
         return fused
-
 
     def fuse_at_level(self, level, element_ids):
         _, height = self.single_element_dimentions()

@@ -47,6 +47,33 @@
           "description": "Число элементов по оси Z"
         }
       }
+    },
+    {
+      "name": "porous_material",
+      "description": "Материал со случайными сферическими порами с фиксированным радиусом",
+      "parameters": {
+        "spheres_count": {
+          "type": "int",
+          "min": 1,
+          "max": 20,
+          "default": 10,
+          "description": "Количество пор"
+        },
+        "r": {
+          "type": "float",
+          "min": 0.01,
+          "max": 0.3,
+          "default": 0.1,
+          "description": "Радиус поры"
+        },
+        "allowance": {
+          "type": "float",
+          "min": 0.001,
+          "max": 0.5,
+          "default": 0.05,
+          "description": "Допустимое расстояние между порами"
+        }
+      }
     }
   ]
 }
