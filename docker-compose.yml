@@ -7,6 +7,7 @@ services:
       - "8000:8000"
     environment:
       - API_KEY=123
+      - REDIS_URL=redis://redis:6379/0
     depends_on:
       - redis
 
