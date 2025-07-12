@@ -10,7 +10,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Генератор ветвящихся элементов и сетки с использованием Gmsh"
     )
-    parser.add_argument("--config", type=str, default="branch_element_4_4_2.yml", help="Путь к конфигурационному файлу (.json или .yaml)")
+    parser.add_argument("--config", type=str, default="configs/branch_element_4_4_2.yml", help="Путь к конфигурационному файлу (.json или .yaml)")
 
     parser.add_argument("--r-root", type=float, help="Радиус корневого элемента")
     parser.add_argument("--h-root", type=float, help="Высота корневого элемента")
