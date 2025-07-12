@@ -13,7 +13,8 @@ def parse_cli_args() -> argparse.Namespace:
     parser.add_argument('--r', type=float, help='Radius of spheres')
     parser.add_argument('--allowance', type=float, help='Allowance between spheres')
     parser.add_argument("--mesh-size", type=float, help="Размер элементов сетки")
-    parser.add_argument('--output', type=str, default='output.msh', help='Output MSH file')
+    parser.add_argument('--output', type=str, default='porous.msh', help='Output MSH file')
+    parser.add_argument("--no-gui", type=bool, default=False, help="Не запускать GUI визуализации Gmsh")
 
     return parser.parse_args()
 
