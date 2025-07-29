@@ -6,3 +6,4 @@ redis
 python-multipart
 requests
 PyYAML
+numpy
